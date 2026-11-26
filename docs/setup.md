@@ -114,7 +114,11 @@ the CodeAnt dashboard (app.codeant.ai) so it only runs on `@codeant-ai: review`.
 **Trigger: put `/graphite-review` in the PR description** (not a comment). Set in
 Graphite's AI review settings: only review PRs whose description contains
 `/graphite-review`. Graphite has no comment command, so this setting is the only
-way to route it. Under test on Clavigers/review_mux #2.
+way to route it.
+
+**Required setting:** PR authors who get reviewed → **All committers in selected
+repositories**. With the default it ignored our PRs entirely (no review on
+Clavigers/review_mux #2 after adding `/graphite-review` and pushing).
 
 
 **Trigger: none documented.** It reviews on its own.
