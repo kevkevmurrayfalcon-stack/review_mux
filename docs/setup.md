@@ -95,7 +95,13 @@ expiry anyway.
 3. Turning off auto-review isn't documented; check the dashboard at app.codeant.ai.
 - Bot login: `codeant-ai[bot]`.
 
-## Graphite: From docs
+## Graphite: Set up on clavigers (2026-11-26)
+
+**Trigger: put `/graphite-review` in the PR description** (not a comment). Set in
+Graphite's AI review settings: only review PRs whose description contains
+`/graphite-review`. Graphite has no comment command, so this setting is the only
+way to route it. Under test on Clavigers/review_mux #2.
+
 
 **Trigger: none documented.** It reviews on its own.
 
