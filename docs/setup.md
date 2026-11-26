@@ -81,6 +81,10 @@ taken from the provider's docs (see `providers-research.md`), not yet tried.
 
 **Trigger: comment `@codeant-ai: review` on an open PR.** First sent on
 Clavigers/review_mux #1 (as sadosystems, admin of clavigers).
+**Worked:** replied within minutes with three comments ("Review Status",
+"Nitpicks", "PR Risk"), and its reply says **"We're free for open-source
+projects"**, so on a public repo it may not be trial-only. Watch for a trial
+expiry anyway.
 
 
 **Trigger: `@codeant-ai: review`**.
