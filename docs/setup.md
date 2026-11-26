@@ -57,9 +57,15 @@ taken from the provider's docs (see `providers-research.md`), not yet tried.
 
 ## Greptile: Set up on clavigers (2026-11-26)
 
-**Trigger: comment `@greptileai` on the PR.** Passed on Clavigers/review_mux #1:
-replied about 20 seconds after the comment, and posted nothing on PRs #1–#3
-before it was mentioned (so it doesn't review automatically).
+**Trigger: comment `@greptileai` on the PR.** The trigger works (reply about 20
+seconds after the comment on Clavigers/review_mux #1), and it posted nothing on
+PRs #1–#3 before being mentioned, so it doesn't review automatically.
+
+**But no review: out of credits.** Its reply: "Your organization has run out of
+review credits." The billing link points to the Greptile account **`sadosystems`**,
+not clavigers, so the install is billed to that account, whose credits are used
+up. Apply for the OSS program (public repo, OSI license) or fix billing before
+counting on it. Out-of-credits marker: `<!-- greptile-credit-pause:`.
 
 
 **Trigger: `@greptileai`** (fixed).
