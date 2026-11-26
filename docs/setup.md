@@ -98,12 +98,18 @@ Credits expire, so the router should use them before they lapse.
 3. Commit `greptile.json`: `{ "autoReview": [], "statusCommentsEnabled": false }`.
 - Bot login: `greptile-apps[bot]`.
 
-## Qodo: Not working on clavigers yet (2026-11-26)
+## Qodo: Works on clavigers (2026-11-26)
 
 Automatic review turned off for all clavigers repos in Qodo. Result: silent on
 new PRs (good), but it also ignored `/agentic_review` (Clavigers/review_mux #2)
 and `/review` (#3), 10 minutes each, posted by sadosystems. Likely causes: "off"
 also disables commands, sadosystems has no Qodo seat, or the trial isn't active.
+
+**Fixed:** the per-repo off switch overrides commands. Turn Qodo **on for the
+repo** (done for review_mux). Then `/agentic_review` produced "Code Review by
+Qodo" about 60 seconds later (Clavigers/review_mux #3), with a real Medium
+finding. Severity appears as a badge (`alt="Remediation recommended"`, Medium).
+**Still to check:** with the repo on, does it auto-review new PRs?
 
 
 **Trigger: `/agentic_review`** (unique enough).
