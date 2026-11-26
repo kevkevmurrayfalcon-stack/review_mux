@@ -1,0 +1,10 @@
+# How review_mux reaches each bot. `trigger` is posted as a PR comment by
+# `trigger_as` (the account that installed the bot). `auto` says whether the
+# bot reviews on its own; the router only spends on bots with auto: false.
+devlo:
+  login: devloai[bot]
+  trigger: /devlo-review   # custom comment trigger set in devlo's dashboard
+  trigger_as: kevkevmurrayfalcon-stack
+  auto: false              # "New pull request" trigger removed in the dashboard
+  budget: {credits: 482, per_review_estimate: 6, renews: unknown}
+  quota_reply: "devlo is paused for this organization because it is out of credits"
