@@ -46,3 +46,22 @@ def test_collect_keeps_known_bots_and_skips_replies():
     found = collect(comments + [human, reply], {"devloai[bot]": "devlo"})
     assert len(found) == len(comments)
     assert {f.bot for f in found} == {"devlo"}
+
+
+def test_one_bots_separate_comments_stay_separate():
+    from review_mux.findings import merge
+    a = Finding(bot="greptile", path="w.py", start_line=4, end_line=4, body="loop bound")
+    b = Finding(bot="greptile", path="w.py", start_line=5, end_line=5, body="oversized n")
+    c = Finding(bot="coderabbit", path="w.py", start_line=4, end_line=5, body="loop bound")
+    got = merge([c, a, b])
+    assert [(g.sources_bots, g.body) for g in got] == [
+        (["coderabbit", "greptile"], "loop bound"), (["greptile"], "oversized n")]
+
+
+def test_headlines_skip_badges():
+    from review_mux.findings import headline
+    cr = ('<!-- x -->\n\n**<picture><img alt=""></picture> Major** · **Functional Correctness**'
+          ' · **Quick win**\n\n**Fix the loop bound so the last item is returned.**\n\nMore.')
+    gr = '<a href=""><img alt="P1" src="p1.svg"></a> **Newest item is always missing**\n\nbody'
+    assert headline(cr) == "Fix the loop bound so the last item is returned."
+    assert headline(gr) == "Newest item is always missing"

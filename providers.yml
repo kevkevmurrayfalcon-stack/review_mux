@@ -1,18 +1,94 @@
-# How review_mux reaches each bot. `trigger` is posted as a PR comment by
-# `trigger_as` (the account that installed the bot). `auto` says whether the
-# bot reviews on its own; the router only spends on bots with auto: false.
+# How review_mux reaches each bot, and how it reads the answer. Every field
+# below is used by the code; see docs/setup.md for how each bot was set up.
+#
+#   login       the bot's GitHub login
+#   trigger     how a review is started: {comment: TEXT} posted on the PR, or
+#               {description: TEXT} added to the PR body
+#   trigger_as  the GitHub account that posts the trigger (the one that
+#               installed the bot; others are ignored). Its token comes from
+#               GH_TOKEN_<ACCOUNT> (upper case, - as _) or `gh auth token --user`.
+#   repos       optional: the only repos the bot is installed on
+#   done        what says the review is finished, after the trigger:
+#               {review: true}            a pull request review by the bot
+#               {comment: REGEX}          an issue comment by the bot matching it
+#               {check_run: NAME}         a completed check run with that name
+#   quota       regexes: a reply matching one means out of credit; no review comes
+#   ignore      regexes: bot comments that are neither findings nor answers
+#   blocks      regex: a finished summary matching it counts as a finding
+#   clean       regex: a finished summary NOT matching it counts as a finding
+#   cost        estimated cost of one review: {usd: X} or {credits: X}; free if absent
+#   quality     0..1, a guess until measured; the router prefers higher
+#   expires     YYYY-MM-DD: credits lapse then, so the router spends them first
+#   timeout_min how long to wait for the answer
+
 devlo:
   login: devloai[bot]
-  trigger: /devlo-review   # custom comment trigger set in devlo's dashboard
+  trigger: {comment: /devlo-review}
   trigger_as: kevkevmurrayfalcon-stack
-  auto: false              # "New pull request" trigger removed in the dashboard
-  budget: {credits: 482, per_review_estimate: 6, renews: unknown}
-  quota_reply: "devlo is paused for this organization because it is out of credits"
+  repos: [kevkevmurrayfalcon-stack/review_mux]
+  done: {review: true}
+  quota: ["devlo is paused for this organization because it is out of credits"]
+  cost: {credits: 6}
+  quality: 0.7
+  timeout_min: 15
 
 ellipsis:
   login: ellipsis-dev[bot]
-  trigger: "@ellipsis review this PR for bugs"  # mention agent; code reviewer is off
-  trigger_as: sadosystems    # admin of the clavigers org, which holds the Ellipsis account
-  repo: Clavigers/review_mux
-  auto: false
-  budget: {usd: 100, renews: false}  # one-time new-organization credit
+  trigger: {comment: "@ellipsis review this PR for bugs"}
+  trigger_as: sadosystems
+  repos: [Clavigers/review_mux]   # its install covers repos of the clavigers org only
+  done: {comment: "(?s).+"}       # it answers the mention with one plain comment
+  clean: "(?i)(didn't|did not) find any (bugs|issues)|found no (bugs|issues)"
+  cost: {usd: 0.20}
+  quality: 0.9
+  timeout_min: 15
+
+coderabbit:
+  login: coderabbitai[bot]
+  trigger: {comment: "@coderabbitai review"}
+  trigger_as: sadosystems
+  done: {check_run: CodeRabbit}
+  quota: ["rate limited by coderabbit.ai", "used all free OSS reviews"]
+  ignore: ["skip review by coderabbit.ai", "auto-generated reply by CodeRabbit"]
+  quality: 0.6
+  timeout_min: 20
+
+greptile:
+  login: greptile-apps[bot]
+  trigger: {comment: "@greptileai"}
+  trigger_as: sadosystems
+  done: {comment: "greptile_summary"}
+  quota: ["greptile-credit-pause", "run out of review credits"]
+  blocks: "greptile_confidence_score:[0-3]\\b"
+  # Free-plan credits that expire: spending them costs nothing. Set expires
+  # once the date is known, so the router favours it near the end.
+  quality: 0.6
+  timeout_min: 15
+
+codeant:
+  login: codeant-ai[bot]
+  trigger: {comment: "@codeant-ai: review"}
+  trigger_as: sadosystems
+  done: {comment: "CodeAnt PR Risk"}
+  ignore: ["Thanks for using CodeAnt", "CodeAnt Review Status"]
+  blocks: "(?i)(medium|high|critical) risk"
+  quality: 0.4
+  timeout_min: 15
+
+qodo:
+  login: qodo-code-review[bot]
+  trigger: {comment: /agentic_review}
+  trigger_as: sadosystems
+  done: {comment: "Code Review by Qodo"}
+  blocks: "(?i)View (critical|high|medium) \\(\\d+\\)"
+  # A 14-day trial: free until it ends, then add cost or remove the bot.
+  quality: 0.6
+  timeout_min: 15
+
+graphite:
+  login: graphite-app[bot]
+  trigger: {description: /graphite-review}
+  trigger_as: sadosystems
+  done: {check_run: "Graphite / AI Reviews"}
+  quality: 0.5
+  timeout_min: 20
