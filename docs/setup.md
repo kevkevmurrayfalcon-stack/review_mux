@@ -118,8 +118,8 @@ by kevkev, a person; watched 10 minutes each), with the app installed on
 ## Ellipsis: $100 free credit for new organizations
 
 **Credit acquired 2026-11-25:** the Ellipsis account is the GitHub organization
-`clavigers` (not the kevkev dry run), which got the $100 free credit. `clavigers` is
-an org, so the person signing in is one of its members (`sadosystems` is its admin). No card
+`clavigers` (not the kevkev dry run), which got the $100 free credit. Ellipsis has one
+account per organization: you log in to Ellipsis as `clavigers`. No card
 was needed. The install can only review repos owned by `clavigers`.
 Dry-run repo: https://github.com/Clavigers/review_mux (a copy of review_mux;
 `sadosystems` is an admin of `clavigers`, so it can post triggers there).
