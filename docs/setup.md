@@ -77,7 +77,11 @@ taken from the provider's docs (see `providers-research.md`), not yet tried.
    command from `pr_commands` under `[github_app]`.
 - Bot login: `qodo-code-review[bot]`.
 
-## CodeAnt AI: From docs (trial only)
+## CodeAnt AI: Installed on clavigers (2026-11-26)
+
+**Trigger: comment `@codeant-ai: review` on an open PR.** First sent on
+Clavigers/review_mux #1 (as sadosystems, admin of clavigers).
+
 
 **Trigger: `@codeant-ai: review`**.
 
@@ -129,8 +133,8 @@ unlike CodeReviewBot). Opus is the most expensive option, so each review spends
 more of the $100; measure the cost per review before relying on it.
 
 **First review (2026-11-26, Clavigers/review_mux #1):** it ran on its own about
-60 seconds after the PR opened, so the default is **automatic on every PR**. Switch
-it to comment-only (`/ellipsis-review`) before using it. The review found a real
+60 seconds after the PR opened, so the default is **automatic on every PR**. See the steps
+below to turn that off. The review found a real
 bug (the README linked files not yet on `master`), and its review comment
 reports its own cost: 8 lines, 1 minute, **$0.20**. review_mux reads that line
 for real spend.
