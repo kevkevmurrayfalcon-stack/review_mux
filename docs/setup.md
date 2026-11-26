@@ -67,6 +67,9 @@ not clavigers, so the install is billed to that account, whose credits are used
 up. Apply for the OSS program (public repo, OSI license) or fix billing before
 counting on it. Out-of-credits marker: `<!-- greptile-credit-pause:`.
 
+**Fix:** in Greptile's billing settings, switch the account to the **Free plan**.
+That granted credits (the account had none before, despite being new).
+
 
 **Trigger: `@greptileai`** (fixed).
 
