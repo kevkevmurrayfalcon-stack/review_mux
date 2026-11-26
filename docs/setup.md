@@ -85,6 +85,9 @@ Clavigers/review_mux #1 (as sadosystems, admin of clavigers).
 "Nitpicks", "PR Risk"), and its reply says **"We're free for open-source
 projects"**, so on a public repo it may not be trial-only. Watch for a trial
 expiry anyway.
+**It reviews every new PR automatically** (seen on Clavigers/review_mux #2, no
+trigger comment). It did not review a later push. Turn automatic review off in
+the CodeAnt dashboard (app.codeant.ai) so it only runs on `@codeant-ai: review`.
 
 
 **Trigger: `@codeant-ai: review`**.
