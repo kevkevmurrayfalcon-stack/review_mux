@@ -1,0 +1,272 @@
+# Setting up each review bot
+
+`kevkevmurrayfalcon-stack` is the **dry run**: we probe each bot there, learn what
+it costs and how it's triggered, and write the steps down here. The real setup on
+`sadosystems` then follows these steps exactly, so no credits or trials are wasted.
+
+Status per bot: **Tested** = done on kevkev and confirmed working; **From docs** =
+taken from the provider's docs (see `providers-research.md`), not yet tried.
+
+## Rules for every bot
+
+1. **Turn auto-review off.** Every review must be started by a comment, so the
+   router decides what gets spent. A bot that reviews on every push burns credits
+   on each commit.
+2. **Give each bot its own trigger.** Several bots use `/review`; one comment must
+   never start two bots. Prefer a custom `/<bot>-review` where the bot allows it.
+3. **Post triggers as the account that installed the bot.** Comments from other
+   accounts are ignored (seen with devlo).
+4. **Record the trigger and budget** in `providers.yml`.
+
+---
+
+## devlo: Tested on kevkev (2026-11-25)
+
+**Trigger: write `/devlo-review` as a PR comment.**
+
+1. Sign up at https://devlo.ai with GitHub. The free plan gives 500 credits a month,
+   2 projects.
+2. Install the GitHub App https://github.com/apps/devloai on the repo.
+3. **Required setting** (devlo has no repo config file; this is the only way to
+   control it): in the devlo dashboard go to **Automations → Code Reviewer →
+   Event Trigger**.
+   - **Delete** the "New pull request" event trigger. While it exists, every push
+     to an open PR runs a review (we lost about 18 credits to this on the dry run).
+   - Leave a **single** event trigger: a PR comment trigger with
+     **Value: `/devlo-review`**.
+4. Test: open a PR, push to it → devlo must stay silent. Then comment
+   `/devlo-review` → devlo posts a review. **Passed on kevkev 2026-11-25:** no
+   review 3 minutes after a push, none on a newly opened PR (#2), and a review
+   within minutes of `/devlo-review` on #1.
+
+- Bot login: `devloai[bot]`. No repo config file; everything is in the dashboard.
+- Cost seen: about 6 credits per review on a small PR (~80 reviews from 482).
+- Out-of-credits reply contains: "devlo is paused for this organization because it
+  is out of credits".
+
+## CodeRabbit: Installed on clavigers (2026-11-26)
+
+**It signs you up for a free trial, not the free plan.** The install screen calls
+it a free trial. Check what happens when the trial ends (whether it falls back to
+the free OSS tier on public repos) before relying on it.
+
+CodeRabbit's terms: "Reviews beyond your plan's rate limits are free during your
+trial. When your trial ends, you can choose whether to keep usage-based reviews
+enabled or opt out." So the plan itself has rate limits; during the trial,
+reviews past them are free; **after the trial, reviews past them are billed
+unless you opt out.** At trial end, **opt out of usage-based reviews** to stay
+free. The router should then expect hitting the rate limit, not a bill.
+
+**Passed 2026-11-26** (Clavigers/review_mux #5): silent for 3 minutes on a new PR;
+`@coderabbitai review` acknowledged in ~20 seconds ("Review triggered") and the
+review finished a few minutes later (check run "CodeRabbit" → Finished). Its
+comment reports the allowance: "Your plan provides up to 10 included reviews
+per hour; 9 remain after this review." review_mux reads that line for capacity.
+It also posts a "Review skipped" comment on PRs it skips (marker `skip review by
+coderabbit.ai`); the muxer ignores those.
+
+Config committed to `Clavigers/review_mux` master as `.coderabbit.yaml`
+(`reviews.auto_review.enabled: false` plus the extras turned off).
+
+
+**Trigger: `@coderabbitai review`** (fixed; can't be customized).
+
+1. Install https://github.com/apps/coderabbitai on the repo. Free on public repos,
+   no application.
+2. Commit `.coderabbit.yaml` to the repo with `reviews.auto_review.enabled: false`,
+   and summaries, walkthrough and poem turned off (keys in `providers-research.md`).
+- Bot login: `coderabbitai[bot]`. Rate-limited hourly; the limit reply says "You've
+  used all free OSS reviews for now".
+
+## Greptile: Set up on clavigers (2026-11-26)
+
+**Trigger: comment `@greptileai` on the PR.** The trigger works (reply about 20
+seconds after the comment on Clavigers/review_mux #1), and it posted nothing on
+PRs #1–#3 before being mentioned, so it doesn't review automatically.
+
+**But no review: out of credits.** Its reply: "Your organization has run out of
+review credits." The billing link points to the Greptile account **`sadosystems`**,
+not clavigers, so the install is billed to that account, whose credits are used
+up. Apply for the OSS program (public repo, OSI license) or fix billing before
+counting on it. Out-of-credits marker: `<!-- greptile-credit-pause:`.
+
+**Fix:** in Greptile's billing settings, switch the account to the **Free plan**.
+That granted credits (the account had none before, despite being new).
+**Passed after the fix:** `@greptileai` produced a review about 80 seconds later
+(summary comment with a confidence score, e.g. "Confidence Score: 5/5").
+Credits expire, so the router should use them before they lapse.
+
+
+**Trigger: `@greptileai`** (fixed).
+
+1. Install https://github.com/apps/greptile-apps. Starter is free for 1 developer
+   with 50 credits a month.
+2. OSS program (unlimited): public repo with an OSI license; 50+ stars is approved
+   automatically, otherwise apply at https://www.greptile.com/pricing/open-source.
+3. Commit `greptile.json`: `{ "autoReview": [], "statusCommentsEnabled": false }`.
+- Bot login: `greptile-apps[bot]`.
+
+## Qodo: Works on clavigers (2026-11-26)
+
+Automatic review turned off for all clavigers repos in Qodo. Result: silent on
+new PRs (good), but it also ignored `/agentic_review` (Clavigers/review_mux #2)
+and `/review` (#3), 10 minutes each, posted by sadosystems. Likely causes: "off"
+also disables commands, sadosystems has no Qodo seat, or the trial isn't active.
+
+**Fixed:** the per-repo off switch overrides commands. Turn Qodo **on for the
+repo** (done for review_mux). Then `/agentic_review` produced "Code Review by
+Qodo" about 60 seconds later (Clavigers/review_mux #3), with a real Medium
+finding. Severity appears as a badge (`alt="Remediation recommended"`, Medium).
+**Still to check:** with the repo on, does it auto-review new PRs?
+
+
+**Trigger: `/agentic_review`** (unique enough).
+
+1. 14-day trial only, then paid. OSS program needs 100+ stars. **Don't start the
+   trial until the router is ready to use it.**
+2. Install https://github.com/apps/qodo-code-review.
+3. Set the trigger to "Manual only", or in `.pr_agent.toml` remove the review
+   command from `pr_commands` under `[github_app]`.
+- Bot login: `qodo-code-review[bot]`.
+
+## CodeAnt AI: Installed on clavigers (2026-11-26)
+
+**Trigger: comment `@codeant-ai: review` on an open PR.** First sent on
+Clavigers/review_mux #1 (as sadosystems, admin of clavigers).
+**Worked:** replied within minutes with three comments ("Review Status",
+"Nitpicks", "PR Risk"), and its reply says **"We're free for open-source
+projects"**, so on a public repo it may not be trial-only. Watch for a trial
+expiry anyway.
+**It reviews every new PR automatically** (seen on Clavigers/review_mux #2, no
+trigger comment). It did not review a later push. Turn automatic review off in
+the CodeAnt dashboard (app.codeant.ai) so it only runs on `@codeant-ai: review`.
+**Fixed:** after changing the CodeAnt dashboard setting, it stayed silent on a new
+PR (Clavigers/review_mux #3, 3 minutes, no trigger).
+
+
+**Trigger: `@codeant-ai: review`**.
+
+1. 14-day trial, no card. For free OSS use, email CodeAnt and ask (their blog says
+   100% off for OSS). **Ask before starting the trial.**
+2. Install https://github.com/apps/codeant-ai.
+3. Turning off auto-review isn't documented; check the dashboard at app.codeant.ai.
+- Bot login: `codeant-ai[bot]`.
+
+## Graphite: Set up on clavigers (2026-11-26)
+
+**Trigger: put `/graphite-review` in the PR description** (not a comment). Set in
+Graphite's AI review settings: only review PRs whose description contains
+`/graphite-review`. Graphite has no comment command, so this setting is the only
+way to route it.
+
+**Passed 2026-11-26:** with `/graphite-review` in the description (Clavigers/
+review_mux #4) it ran; PRs without it (#3, #5) were skipped. **It reports through
+a check run named "Graphite / AI Reviews"**, whose summary says e.g. "AI review
+ran and left 0 comments"; findings appear as inline comments. Watch check runs,
+not just comments.
+
+**Required setting:** PR authors who get reviewed → **All committers in selected
+repositories**. With the default it ignored our PRs entirely (no review on
+Clavigers/review_mux #2 after adding `/graphite-review` and pushing).
+
+
+**Trigger: none documented.** It reviews on its own.
+
+1. Install https://github.com/apps/graphite-app on the personal account.
+2. Hobby plan: "limited" AI reviews, cap not stated. Enable reviews per repo in the
+   dashboard.
+- Can't be routed until we find a manual trigger; on the dry run, check whether
+  the dashboard offers one.
+- Bot login: `graphite-app[bot]`.
+
+## CodeReviewBot.AI: Not working on kevkev (2026-11-26)
+
+**Result:** no comment, review or check of any kind on PR #2 or PR #3 (both opened
+by kevkev, a person; watched 10 minutes each), with the app installed on
+`review_mux`. **Dropped: don't set it up on sadosystems.**
+
+**Trigger: none.** It reviews when a PR is opened.
+
+1. Sign up at https://codereviewbot.ai and install
+   https://github.com/apps/codereviewbot-ai. Free for public OSS repos.
+   - There is nothing to configure: no settings, no config file, and the model
+     isn't shown. After signup it just asks you to open a PR.
+2. Free accounts skip PRs opened by bots, so PRs must be opened by a person's
+   account.
+- Can't be routed. Every PR gets reviewed, which is fine while it's free.
+- Bot login: `codereviewbot-ai[bot]`.
+
+## Ellipsis: $100 free credit for new organizations
+
+**Credit acquired 2026-11-25:** the Ellipsis account is the GitHub organization
+`clavigers` (not the kevkev dry run), which got the $100 free credit. Ellipsis has one
+account per organization: you log in to Ellipsis as `clavigers`. No card
+was needed. The install can only review repos owned by `clavigers`.
+Dry-run repo: https://github.com/Clavigers/review_mux (a copy of review_mux;
+`sadosystems` is an admin of `clavigers`, so it can post triggers there).
+
+**Model:** configured to use Claude Opus 5.5 (Ellipsis lets you pick the model,
+unlike CodeReviewBot). Opus is the most expensive option, so each review spends
+more of the $100; measure the cost per review before relying on it.
+
+**First review (2026-11-26, Clavigers/review_mux #1):** it ran on its own about
+60 seconds after the PR opened, so the default is **automatic on every PR**. See the steps
+below to turn that off. The review found a real
+bug (the README linked files not yet on `master`), and its review comment
+reports its own cost: 8 lines, 1 minute, **$0.20**. review_mux reads that line
+for real spend.
+
+**It can approve PRs.** It approved PR #1 even though it had just found a bug, so its
+approval means nothing about quality. Ellipsis can submit a real GitHub "Approve" review, not
+just comments. If branch protection requires an approving review, a bot approval
+may count toward it, letting a PR merge with no human review. Either turn
+approvals off in Ellipsis, or make sure branch protection doesn't count its
+approval (e.g. require review from code owners who are people). review_mux
+records a bot's approval as a signal only; it never counts toward merging.
+
+Ellipsis's signup says new organizations get $100 of free credit, no card.
+Billing is prepaid credit plus compute and model tokens, so $100 is a one-time
+budget, not a monthly one.
+
+Ellipsis has **two separate agents**, and both need configuring:
+
+- **Code reviewer** (`kind: code_review`): reviews PRs automatically, on every PR
+  by a person. It has **no comment trigger**, so it must be switched off.
+- **Mention agent** (`kind: github`): answers comments that mention `@ellipsis`.
+  **This is our trigger.**
+
+Steps:
+
+1. Sign up at https://ellipsis.dev with a GitHub **organization** and install
+   https://github.com/apps/ellipsis-dev on it (all repositories).
+2. Create a repo named **`.ellipsis`** in that organization (private is fine).
+   Ellipsis reads the org's agent configs from it. Copy the two files from
+   `Clavigers/.ellipsis`:
+   - **`code-review.yaml`**: turns off automatic reviews by limiting the reviewer
+     to PRs into a branch that never exists (`pull_requests.base:
+     [ellipsis-manual-only]`), and sets `output.on_pass: silent` so it never
+     approves.
+   - **`github.yaml`**: the mention agent, made safer than the dashboard default:
+     - `github.repositories: [review_mux]`, not `'*'` (all repos).
+     - `session.budget.session: 1.0` (default was $10) and `day: 3.0`. On a
+       public repo, anyone may be able to mention it and spend credit.
+     - `allow_leading_ellipsis: false`, so only `@ellipsis` triggers it.
+     - Model: `session.claude_code.model: claude-opus-5-5`.
+3. **Required browser-only setting:** the automatic code reviewer is configured
+   in the Ellipsis dashboard, and the `.ellipsis` repo file does **not** override
+   it. The dashboard won't let you pick no repos, so point it at a dead repo (on
+   clavigers we used `spandrel`). Without this it reviews and approves every PR.
+4. In the dashboard, check that the agents now use the repo files, not the
+   dashboard-defined config ("Source").
+5. **Trigger: comment `@ellipsis review this PR for bugs` on the PR.**
+6. Test: push to an open PR → no review. Then the mention → a review.
+   **Passed 2026-11-26** (Clavigers/review_mux #1): no review in 3 minutes after
+   a push, and a reply about 40 seconds after the mention. The reply is a plain
+   comment, not a GitHub review, so it can't approve.
+- Bot login: `ellipsis-dev[bot]`.
+
+## GitHub Copilot code review: skip
+
+Needs a paid Copilot plan. With Copilot Free, requesting Copilot as a reviewer
+(`gh pr edit --add-reviewer @copilot`) is silently ignored (tried on
+Clavigers/review_mux #5, 2026-11-26).

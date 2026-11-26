@@ -12,7 +12,7 @@ still needs checking against the provider's own pages.
 | Graphite | https://graphite.dev | https://graphite.dev/pricing | Hobby free with limited AI reviews; 30-day Team trial | No |
 | CodeAnt AI | https://codeant.ai | https://codeant.ai/pricing | 14-day trial, no card; OSS gets 100% off, arranged by contacting them | Partly (their blog) |
 | Qodo | https://qodo.ai | https://qodo.ai/pricing | 14-day trial; OSS program | No |
-| devlo | https://devlo.ai | https://devlo.ai/pricing | Claimed free 500 credits/mo; third parties only show paid plans from $19 | Doubtful |
+| devlo | https://devlo.ai | https://devlo.ai/pricing | Free tier with 500 credits (confirmed by signing up, 2026-11-25) | Yes |
 | CodeReviewBot.AI | https://codereviewbot.ai | — | 1-month Starter trial via GitHub Marketplace | Listing not found yet |
 
 Install links (GitHub App or Marketplace pages):
