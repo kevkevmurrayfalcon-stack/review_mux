@@ -179,9 +179,13 @@ Steps:
        public repo, anyone may be able to mention it and spend credit.
      - `allow_leading_ellipsis: false`, so only `@ellipsis` triggers it.
      - Model: `session.claude_code.model: claude-opus-5-5`.
-3. In the dashboard, check that the agents now use the repo files, not the
+3. **Required browser-only setting:** the automatic code reviewer is configured
+   in the Ellipsis dashboard, and the `.ellipsis` repo file does **not** override
+   it. The dashboard won't let you pick no repos, so point it at a dead repo (on
+   clavigers we used `spandrel`). Without this it reviews and approves every PR.
+4. In the dashboard, check that the agents now use the repo files, not the
    dashboard-defined config ("Source").
-4. **Trigger: comment `@ellipsis review this PR for bugs` on the PR.**
-5. Test: push to an open PR → no review. Then the mention → a review.
+5. **Trigger: comment `@ellipsis review this PR for bugs` on the PR.**
+6. Test: push to an open PR → no review. Then the mention → a review.
    **Status: under test on Clavigers/review_mux #1 (2026-11-26).**
 - Bot login: `ellipsis-dev[bot]`.
