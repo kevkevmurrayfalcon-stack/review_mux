@@ -147,11 +147,33 @@ Ellipsis's signup says new organizations get $100 of free credit, no card.
 Billing is prepaid credit plus compute and model tokens, so $100 is a one-time
 budget, not a monthly one.
 
-1. Sign up at https://ellipsis.dev and create an organization (check whether a
-   personal GitHub account counts, or whether it needs a GitHub organization).
-2. Install https://github.com/apps/ellipsis-dev.
-3. Code review is an agent defined in `.ellipsis/code-review.yaml` on the default
-   branch (`kind: code_review`). No comment command is documented; set up a PR
-   `on: [commented]` trigger so it only runs when asked, and give it a unique
-   command such as `/ellipsis-review`. To be confirmed on the dry run.
+Ellipsis has **two separate agents**, and both need configuring:
+
+- **Code reviewer** (`kind: code_review`): reviews PRs automatically, on every PR
+  by a person. It has **no comment trigger**, so it must be switched off.
+- **Mention agent** (`kind: github`): answers comments that mention `@ellipsis`.
+  **This is our trigger.**
+
+Steps:
+
+1. Sign up at https://ellipsis.dev with a GitHub **organization** and install
+   https://github.com/apps/ellipsis-dev on it (all repositories).
+2. Create a repo named **`.ellipsis`** in that organization (private is fine).
+   Ellipsis reads the org's agent configs from it. Copy the two files from
+   `Clavigers/.ellipsis`:
+   - **`code-review.yaml`**: turns off automatic reviews by limiting the reviewer
+     to PRs into a branch that never exists (`pull_requests.base:
+     [ellipsis-manual-only]`), and sets `output.on_pass: silent` so it never
+     approves.
+   - **`github.yaml`**: the mention agent, made safer than the dashboard default:
+     - `github.repositories: [review_mux]`, not `'*'` (all repos).
+     - `session.budget.session: 1.0` (default was $10) and `day: 3.0`. On a
+       public repo, anyone may be able to mention it and spend credit.
+     - `allow_leading_ellipsis: false`, so only `@ellipsis` triggers it.
+     - Model: `session.claude_code.model: claude-opus-5-5`.
+3. In the dashboard, check that the agents now use the repo files, not the
+   dashboard-defined config ("Source").
+4. **Trigger: comment `@ellipsis review this PR for bugs` on the PR.**
+5. Test: push to an open PR → no review. Then the mention → a review.
+   **Status: under test on Clavigers/review_mux #1 (2026-11-26).**
 - Bot login: `ellipsis-dev[bot]`.

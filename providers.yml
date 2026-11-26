@@ -11,7 +11,7 @@ devlo:
 
 ellipsis:
   login: ellipsis-dev[bot]
-  trigger: /ellipsis-review  # planned; comment trigger not yet set up
+  trigger: "@ellipsis review this PR for bugs"  # mention agent; code reviewer is off
   trigger_as: sadosystems    # admin of the clavigers org, which holds the Ellipsis account
   repo: Clavigers/review_mux
   auto: false
