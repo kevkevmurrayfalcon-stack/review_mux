@@ -44,7 +44,15 @@ taken from the provider's docs (see `providers-research.md`), not yet tried.
 - Out-of-credits reply contains: "devlo is paused for this organization because it
   is out of credits".
 
-## CodeRabbit: From docs
+## CodeRabbit: Installed on clavigers (2026-11-26)
+
+**It signs you up for a free trial, not the free plan.** The install screen calls
+it a free trial. Check what happens when the trial ends (whether it falls back to
+the free OSS tier on public repos) before relying on it.
+
+Config committed to `Clavigers/review_mux` master as `.coderabbit.yaml`
+(`reviews.auto_review.enabled: false` plus the extras turned off).
+
 
 **Trigger: `@coderabbitai review`** (fixed; can't be customized).
 
