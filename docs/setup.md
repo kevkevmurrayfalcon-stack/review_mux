@@ -69,6 +69,9 @@ counting on it. Out-of-credits marker: `<!-- greptile-credit-pause:`.
 
 **Fix:** in Greptile's billing settings, switch the account to the **Free plan**.
 That granted credits (the account had none before, despite being new).
+**Passed after the fix:** `@greptileai` produced a review about 80 seconds later
+(summary comment with a confidence score, e.g. "Confidence Score: 5/5").
+Credits expire, so the router should use them before they lapse.
 
 
 **Trigger: `@greptileai`** (fixed).
@@ -102,6 +105,8 @@ expiry anyway.
 **It reviews every new PR automatically** (seen on Clavigers/review_mux #2, no
 trigger comment). It did not review a later push. Turn automatic review off in
 the CodeAnt dashboard (app.codeant.ai) so it only runs on `@codeant-ai: review`.
+**Fixed:** after changing the CodeAnt dashboard setting, it stayed silent on a new
+PR (Clavigers/review_mux #3, 3 minutes, no trigger).
 
 
 **Trigger: `@codeant-ai: review`**.
