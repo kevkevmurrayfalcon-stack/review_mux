@@ -256,3 +256,9 @@ Steps:
    a push, and a reply about 40 seconds after the mention. The reply is a plain
    comment, not a GitHub review, so it can't approve.
 - Bot login: `ellipsis-dev[bot]`.
+
+## GitHub Copilot code review: skip
+
+Needs a paid Copilot plan. With Copilot Free, requesting Copilot as a reviewer
+(`gh pr edit --add-reviewer @copilot`) is silently ignored (tried on
+Clavigers/review_mux #5, 2026-11-26).
