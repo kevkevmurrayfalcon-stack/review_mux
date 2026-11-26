@@ -187,5 +187,7 @@ Steps:
    dashboard-defined config ("Source").
 5. **Trigger: comment `@ellipsis review this PR for bugs` on the PR.**
 6. Test: push to an open PR → no review. Then the mention → a review.
-   **Status: under test on Clavigers/review_mux #1 (2026-11-26).**
+   **Passed 2026-11-26** (Clavigers/review_mux #1): no review in 3 minutes after
+   a push, and a reply about 40 seconds after the mention. The reply is a plain
+   comment, not a GitHub review, so it can't approve.
 - Bot login: `ellipsis-dev[bot]`.
