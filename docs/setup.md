@@ -117,9 +117,9 @@ by kevkev, a person; watched 10 minutes each), with the app installed on
 
 ## Ellipsis: $100 free credit for new organizations
 
-**Credit acquired 2026-11-25:** logged in to Ellipsis as `sadosystems` (the real
-account, not the kevkev dry run) and set it up for the GitHub organization
-`clavigers` (an org, not a personal account), which got the $100 free credit. No card
+**Credit acquired 2026-11-25:** the Ellipsis account is the GitHub organization
+`clavigers` (not the kevkev dry run), which got the $100 free credit. `clavigers` is
+an org, so the person signing in is one of its members (`sadosystems` is its admin). No card
 was needed. The install can only review repos owned by `clavigers`.
 Dry-run repo: https://github.com/Clavigers/review_mux (a copy of review_mux;
 `sadosystems` is an admin of `clavigers`, so it can post triggers there).
@@ -128,7 +128,15 @@ Dry-run repo: https://github.com/Clavigers/review_mux (a copy of review_mux;
 unlike CodeReviewBot). Opus is the most expensive option, so each review spends
 more of the $100; measure the cost per review before relying on it.
 
-**It can approve PRs.** Ellipsis can submit a real GitHub "Approve" review, not
+**First review (2026-11-26, Clavigers/review_mux #1):** it ran on its own about
+60 seconds after the PR opened, so the default is **automatic on every PR**. Switch
+it to comment-only (`/ellipsis-review`) before using it. The review found a real
+bug (the README linked files not yet on `master`), and its review comment
+reports its own cost: 8 lines, 1 minute, **$0.20**. review_mux reads that line
+for real spend.
+
+**It can approve PRs.** It approved PR #1 even though it had just found a bug, so its
+approval means nothing about quality. Ellipsis can submit a real GitHub "Approve" review, not
 just comments. If branch protection requires an approving review, a bot approval
 may count toward it, letting a PR merge with no human review. Either turn
 approvals off in Ellipsis, or make sure branch protection doesn't count its
