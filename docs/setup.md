@@ -145,6 +145,12 @@ Graphite's AI review settings: only review PRs whose description contains
 `/graphite-review`. Graphite has no comment command, so this setting is the only
 way to route it.
 
+**Passed 2026-11-26:** with `/graphite-review` in the description (Clavigers/
+review_mux #4) it ran; PRs without it (#3, #5) were skipped. **It reports through
+a check run named "Graphite / AI Reviews"**, whose summary says e.g. "AI review
+ran and left 0 comments"; findings appear as inline comments. Watch check runs,
+not just comments.
+
 **Required setting:** PR authors who get reviewed → **All committers in selected
 repositories**. With the default it ignored our PRs entirely (no review on
 Clavigers/review_mux #2 after adding `/graphite-review` and pushing).
