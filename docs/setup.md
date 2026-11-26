@@ -50,6 +50,13 @@ taken from the provider's docs (see `providers-research.md`), not yet tried.
 it a free trial. Check what happens when the trial ends (whether it falls back to
 the free OSS tier on public repos) before relying on it.
 
+CodeRabbit's terms: "Reviews beyond your plan's rate limits are free during your
+trial. When your trial ends, you can choose whether to keep usage-based reviews
+enabled or opt out." So the plan itself has rate limits; during the trial,
+reviews past them are free; **after the trial, reviews past them are billed
+unless you opt out.** At trial end, **opt out of usage-based reviews** to stay
+free. The router should then expect hitting the rate limit, not a bill.
+
 Config committed to `Clavigers/review_mux` master as `.coderabbit.yaml`
 (`reviews.auto_review.enabled: false` plus the extras turned off).
 
