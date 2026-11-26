@@ -55,7 +55,12 @@ taken from the provider's docs (see `providers-research.md`), not yet tried.
 - Bot login: `coderabbitai[bot]`. Rate-limited hourly; the limit reply says "You've
   used all free OSS reviews for now".
 
-## Greptile: From docs
+## Greptile: Set up on clavigers (2026-11-26)
+
+**Trigger: comment `@greptileai` on the PR.** Passed on Clavigers/review_mux #1:
+replied about 20 seconds after the comment, and posted nothing on PRs #1–#3
+before it was mentioned (so it doesn't review automatically).
+
 
 **Trigger: `@greptileai`** (fixed).
 
