@@ -57,6 +57,14 @@ reviews past them are free; **after the trial, reviews past them are billed
 unless you opt out.** At trial end, **opt out of usage-based reviews** to stay
 free. The router should then expect hitting the rate limit, not a bill.
 
+**Passed 2026-11-26** (Clavigers/review_mux #5): silent for 3 minutes on a new PR;
+`@coderabbitai review` acknowledged in ~20 seconds ("Review triggered") and the
+review finished a few minutes later (check run "CodeRabbit" → Finished). Its
+comment reports the allowance: "Your plan provides up to 10 included reviews
+per hour; 9 remain after this review." review_mux reads that line for capacity.
+It also posts a "Review skipped" comment on PRs it skips (marker `skip review by
+coderabbit.ai`); the muxer ignores those.
+
 Config committed to `Clavigers/review_mux` master as `.coderabbit.yaml`
 (`reviews.auto_review.enabled: false` plus the extras turned off).
 
